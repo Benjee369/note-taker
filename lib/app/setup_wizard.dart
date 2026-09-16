@@ -10,7 +10,7 @@ class SetupWizardScreen extends StatelessWidget {
   const SetupWizardScreen({super.key});
 
   Future<void> _selectFolder(BuildContext context) async {
-    final selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    final selectedDirectory = await FilePicker.getDirectoryPath();
     if (selectedDirectory == null) return;
 
     final prefs = await SharedPreferences.getInstance();
