@@ -10,6 +10,8 @@ import 'package:notes/shared/database/note_database.dart';
 import 'package:notes/shared/database/open_note_database.dart';
 import 'package:notes/shared/providers/note_provider.dart';
 
+import '../shared/providers/user_details_provider.dart';
+
 class ProviderLayer extends StatelessWidget {
   const ProviderLayer({super.key});
 
@@ -24,6 +26,9 @@ class ProviderLayer extends StatelessWidget {
         Provider(create: (_) => PreviewDatabase()),
         ChangeNotifierProvider(
           create: (context) => SettingsTabIndexProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserDetailsProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => SystemSettingsProvider(

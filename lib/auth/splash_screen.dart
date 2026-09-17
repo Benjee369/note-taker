@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes/auth/sign_in_screen.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
 import 'package:notes/shared/constants/strings.dart';
 import 'package:notes/shared/navigation/navigation.dart';
 import 'package:notes/shared/constants/app_images.dart';
 import 'package:notes/shared/constants/app_sizes.dart';
 import 'package:notes/features/notes/home_screen.dart';
+import '../shared/database/first_open_database.dart';
+import '../shared/services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,14 +26,23 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  void init() {
-    // Hive.deleteFromDisk();
-    if (mounted) {
+  Future<void> init() async {
+    final isFirstOpen = await FirstOpenDatabase().getFirstOpenState();
+    if (!mounted) return;
+    final auth = AuthService();
+
+    if (isFirstOpen && !auth.isSignedIn) {
       Navigation.navigateAndReplace(
         context,
-        HomeScreen(),
+        SignInScreen(),
       );
+      return;
     }
+
+    Navigation.navigateAndReplace(
+      context,
+      HomeScreen(),
+    );
   }
 
   @override

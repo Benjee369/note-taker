@@ -36,12 +36,16 @@ void main() async {
   final hiveDir = await _resolveHiveDirectory(prefs);
 
   if (hiveDir.isEmpty) {
-    runApp(const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SetupWizardScreen(),
-    ));
+    runApp(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SetupWizardScreen(),
+      ),
+    );
   } else {
     Hive.init(hiveDir);
-    runApp(const ProviderLayer());
+    runApp(
+      const ProviderLayer(),
+    );
   }
 }
