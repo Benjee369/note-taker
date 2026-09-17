@@ -226,6 +226,11 @@ class NoteProvider with ChangeNotifier {
     String noteUuid,
     String? folderUuid,
   ) async {
+    log(
+      'adding file: $noteUuid to folder: $folderUuid...',
+      name: 'NoteProvider',
+    );
+
     final previewIndex = _previews.indexWhere((p) => p.uuid == noteUuid);
     if (previewIndex != -1) {
       final oldPreview = _previews[previewIndex];
@@ -244,6 +249,10 @@ class NoteProvider with ChangeNotifier {
       final updated = note.copyWith(folderUuid: folderUuid);
       await saveNote(updated);
     }
+    log(
+      'added file to folder...',
+      name: 'NoteProvider',
+    );
   }
 
   Future deleteFolder(String folderUuid) async {

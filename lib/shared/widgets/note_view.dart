@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:notes/shared/models/folder_model.dart';
 import 'package:notes/shared/models/note_preview_model.dart';
@@ -5,6 +7,9 @@ import 'package:notes/shared/constants/app_sizes.dart';
 import 'package:notes/shared/widgets/note_widget.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
 import 'package:notes/shared/providers/note_provider.dart';
+import 'package:provider/provider.dart';
+
+import 'computer_folder_widget.dart';
 
 class NoteView extends StatelessWidget {
   final int index;
@@ -33,46 +38,41 @@ class NoteView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final note = processedList[index];
+    final theme = Theme.of(context).colorScheme;
 
     if (note is Folder) {
       final f = note.folderModel;
       final isCollapsed = collapsedFolderUuids.contains(f.uuid);
 
-      return InkWell(
-        onSecondaryTapDown: (details) {
-          onFolderSecondaryTap?.call(
-            details,
-            f,
+      return DragTarget<PreviewNote>(
+        onWillAcceptWithDetails: (details) => true,
+        onAcceptWithDetails: (details) {
+          log(
+            'adding file to folder...',
+            name: 'NoteView',
+          );
+          context.read<NoteProvider>().addToFolder(
+                details.data.previewModel.uuid,
+                f.uuid,
+              );
+        },
+        builder: (context, candidateData, rejectedData) {
+          final isHovering = candidateData.isNotEmpty;
+          return InkWell(
+            onSecondaryTapDown: (details) {
+              onFolderSecondaryTap?.call(
+                details,
+                f,
+              );
+            },
+            onTap: () => onFolderTap?.call(f),
+            child: ComputerFolderWidget(
+              isCollapsed: isCollapsed,
+              isHovered: isHovering,
+              f: f,
+            ),
           );
         },
-        onTap: () => onFolderTap?.call(f),
-        child: ColoredBox(
-          color: Theme.of(context).colorScheme.secondary.withAlpha(40),
-          child: Padding(
-            padding: const EdgeInsets.all(5),
-            child: Row(
-              children: [
-                Icon(
-                  isCollapsed
-                      ? Icons.keyboard_arrow_right_rounded
-                      : Icons.keyboard_arrow_down_rounded,
-                  size: 14,
-                ),
-                gapW12,
-                Icon(
-                  Icons.folder_rounded,
-                  size: 16,
-                ),
-                gapW8,
-                TextWidget(
-                  text: f.name,
-                  size: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
-            ),
-          ),
-        ),
       );
     }
     if (note is PreviewNote) {
@@ -80,23 +80,49 @@ class NoteView extends StatelessWidget {
       final selected = selectedNotes.contains(n.uuid);
       final isInFolder = n.folderUuid != null;
 
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onLongPressStart: (details) => onLongPress?.call(
-          details,
-          n,
+      return Draggable<PreviewNote>(
+        data: note,
+        feedback: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: theme.primary.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: TextWidget(
+              text: note.previewModel.contentPreview,
+              maxLines: 1,
+              overFlow: TextOverflow.ellipsis,
+            ),
+          ),
         ),
-        onSecondaryTapDown: (details) {
-          onSecondaryTap?.call(
+        childWhenDragging: Opacity(
+          opacity: 0.4,
+          child: NoteWidget(
+            note: n,
+            isSelected: selected,
+            isInFolder: isInFolder,
+          ),
+        ),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onLongPressStart: (details) => onLongPress?.call(
             details,
             n,
-          );
-        },
-        onTap: () => onTap.call(n),
-        child: NoteWidget(
-          note: n,
-          isSelected: selected,
-          isInFolder: isInFolder,
+          ),
+          onSecondaryTapDown: (details) {
+            onSecondaryTap?.call(
+              details,
+              n,
+            );
+          },
+          onTap: () => onTap.call(n),
+          child: NoteWidget(
+            note: n,
+            isSelected: selected,
+            isInFolder: isInFolder,
+          ),
         ),
       );
     }

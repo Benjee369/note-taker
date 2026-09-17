@@ -416,13 +416,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   selectedNotes: selectedNotes,
                 )
               : DesktopHomeScreen(
-                  noteView: ReorderableListView.builder(
+                  noteView: ListView.builder(
                     itemCount: notesNFolders.length,
-                    onReorderItem: (oldIndex, newIndex) {
-                      final isFolder = notesNFolders[oldIndex] is Folder;
-
-                      if (isFolder) return;
-                    },
+                    // onReorderItem: (oldIndex, newIndex) {
+                    //   final isFolder = notesNFolders[oldIndex] is Folder;
+                    //
+                    //   if (isFolder) return;
+                    // },
                     // buildDefaultDragHandles: false,
                     itemBuilder: (context, index) {
                       final isFolder = notesNFolders[index] is Folder;
