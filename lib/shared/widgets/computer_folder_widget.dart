@@ -19,7 +19,7 @@ class ComputerFolderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final size = MediaQuery.sizeOf(context);
+    // final size = MediaQuery.sizeOf(context);
 
     return ColoredBox(
       color: isHovered
@@ -33,7 +33,7 @@ class ComputerFolderWidget extends StatelessWidget {
               isCollapsed
                   ? Icons.keyboard_arrow_right_rounded
                   : Icons.keyboard_arrow_down_rounded,
-              size: 14,
+              size: 15,
             ),
             gapW12,
             Icon(
@@ -41,15 +41,12 @@ class ComputerFolderWidget extends StatelessWidget {
               size: 16,
             ),
             gapW8,
-            SizedBox(
-              width: size.width * 0.8,
-              child: TextWidget(
-                text: f.name,
-                size: 16,
-                fontWeight: FontWeight.bold,
-                overFlow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
+            TextWidget(
+              text: f.name,
+              size: 16,
+              fontWeight: FontWeight.bold,
+              overFlow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ],
         ),

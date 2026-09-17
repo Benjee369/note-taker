@@ -218,7 +218,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen>
                       alignment: Alignment.center,
                       children: [
                         VerticalDivider(
-                          thickness: 1,
+                          thickness: 3,
                           color: theme.primary,
                         ),
                         GestureDetector(

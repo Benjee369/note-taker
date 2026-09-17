@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "518013775568",
+    "project_id": "note-taker-adbb8",
+    "storage_bucket": "note-taker-adbb8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518013775568:android:1e5b57a9e63da0d0e838d5",
+        "android_client_info": {
+          "package_name": "com.lwendo.notes.notes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgnuTaMX9Kpe0Ml8g2eo6wmNeBrCXQ-Q4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -451,7 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // },
                     // buildDefaultDragHandles: false,
                     itemBuilder: (context, index) {
-                      final isFolder = notesNFolders[index] is Folder;
+                      // final isFolder = notesNFolders[index] is Folder;
 
                       return NoteView(
                         key: ValueKey(index),

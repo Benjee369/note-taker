@@ -1,14 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:notes/shared/models/folder_model.dart';
 import 'package:notes/shared/models/note_preview_model.dart';
-import 'package:notes/shared/constants/app_sizes.dart';
 import 'package:notes/shared/widgets/note_widget.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
 import 'package:notes/shared/providers/note_provider.dart';
 import 'package:provider/provider.dart';
-
 import 'computer_folder_widget.dart';
 
 class NoteView extends StatelessWidget {
@@ -87,13 +84,14 @@ class NoteView extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.primary.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(8),
+              color: theme.primary,
+              borderRadius: BorderRadius.circular(2),
             ),
             child: TextWidget(
               text: note.previewModel.contentPreview,
               maxLines: 1,
               overFlow: TextOverflow.ellipsis,
+              size: 14,
             ),
           ),
         ),

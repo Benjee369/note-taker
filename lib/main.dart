@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -5,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:notes/shared/providers/platform_provider.dart';
 import 'package:notes/app/provider_layer.dart';
 import 'package:notes/app/setup_wizard.dart';
+
+import 'firebase_options.dart';
 
 const _hiveDirKey = 'hive_directory';
 const _hiveSubDir = 'NoteTakerBoxes';
@@ -23,6 +26,11 @@ Future<String> _resolveHiveDirectory(SharedPreferences prefs) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   final prefs = await SharedPreferences.getInstance();
   final hiveDir = await _resolveHiveDirectory(prefs);
