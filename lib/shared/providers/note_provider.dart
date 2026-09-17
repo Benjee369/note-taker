@@ -269,6 +269,43 @@ class NoteProvider with ChangeNotifier {
     await folderDatabase.deleteFolder(folderUuid);
   }
 
+  Future removeNoteFromFolder(String noteUuid) async {
+    final previewIndex = _previews.indexWhere((p) => p.uuid == noteUuid);
+    if (previewIndex != -1) {
+      final oldPreview = _previews[previewIndex];
+      _previews[previewIndex] = NotePreviewModel(
+        uuid: oldPreview.uuid,
+        createdDate: oldPreview.createdDate,
+        contentPreview: oldPreview.contentPreview,
+        folderUuid: null,
+        isPinned: oldPreview.isPinned,
+      );
+      notifyListeners();
+    }
+
+    NoteModel? note;
+    final idx = _notes.indexWhere((n) => n.uuid == noteUuid);
+    if (idx != -1) {
+      note = _notes[idx];
+    } else {
+      note = await noteDatabase.getSingleNote(noteUuid);
+    }
+    if (note != null) {
+      final newNote = note.copyWith(folderUuid: null);
+      if (idx != -1) {
+        _notes[idx] = newNote;
+      } else {
+        _notes.add(newNote);
+      }
+      if (_noteModel?.uuid == noteUuid) {
+        _noteModel = newNote;
+      }
+      notifyListeners();
+      await noteDatabase.saveNote(newNote);
+      await previewDatabase.saveNotePreview(newNote);
+    }
+  }
+
   Future changeFolderName(
     FolderModel folder,
     String newName,

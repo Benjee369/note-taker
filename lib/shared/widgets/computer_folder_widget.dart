@@ -19,6 +19,8 @@ class ComputerFolderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.sizeOf(context);
+
     return ColoredBox(
       color: isHovered
           ? theme.colorScheme.primary.withAlpha(90)
@@ -39,10 +41,15 @@ class ComputerFolderWidget extends StatelessWidget {
               size: 16,
             ),
             gapW8,
-            TextWidget(
-              text: f.name,
-              size: 16,
-              fontWeight: FontWeight.bold,
+            SizedBox(
+              width: size.width * 0.8,
+              child: TextWidget(
+                text: f.name,
+                size: 16,
+                fontWeight: FontWeight.bold,
+                overFlow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
           ],
         ),

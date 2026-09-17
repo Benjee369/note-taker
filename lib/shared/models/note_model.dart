@@ -25,13 +25,15 @@ class NoteModel {
       _$NoteModelFromJson(json);
   Map<String, dynamic> toJson() => _$NoteModelToJson(this);
 
+  static const Object _sentinel = Object();
+
   NoteModel copyWith({
     String? uuid,
     String? content,
     DateTime? createDate,
     DateTime? updatedDate,
     bool? isPinned,
-    String? folderUuid,
+    Object? folderUuid = _sentinel,
   }) {
     return NoteModel(
       uuid: uuid ?? this.uuid,
@@ -39,7 +41,9 @@ class NoteModel {
       createdDate: createDate ?? createdDate,
       updatedDate: updatedDate ?? this.updatedDate,
       isPinned: isPinned ?? this.isPinned,
-      folderUuid: folderUuid ?? this.folderUuid,
+      folderUuid: folderUuid == _sentinel
+          ? this.folderUuid
+          : folderUuid as String?,
     );
   }
 }

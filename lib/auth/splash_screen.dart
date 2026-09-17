@@ -19,14 +19,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   getNotes();
-    init();
+      init();
     });
   }
 
   void init() {
     // Hive.deleteFromDisk();
-    // await context.read<NoteProvider>().getNotes();
     if (mounted) {
       Navigation.navigateAndReplace(
         context,

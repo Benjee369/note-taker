@@ -26,6 +26,7 @@ class PreviewDatabase {
       uuid: note.uuid,
       createdDate: note.createdDate,
       contentPreview: content,
+      folderUuid: note.folderUuid,
       isPinned: note.isPinned,
     );
     final box = await getBox();

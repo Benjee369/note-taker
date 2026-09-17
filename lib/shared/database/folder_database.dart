@@ -37,7 +37,7 @@ class FolderDatabase {
           )
           .toList();
       log(
-        'got (${folders.length})list of folders $folders...',
+        'got (${folders.length})list of folders ${folders.map((f) => f.uuid)}...',
         name: 'FolderDatabase',
       );
       return folders;

@@ -91,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     final position = details?.globalPosition ?? tapDownDetails?.globalPosition;
     if (position == null) return;
+    final isInFolder = note.folderUuid != null;
 
     CustomPopupMenu.show(
       context: context,
@@ -117,9 +118,17 @@ class _HomeScreenState extends State<HomeScreen> {
           label: Strings.delete,
         ),
         PopupMenuItemData(
-            value: 5,
+          value: 5,
+          icon: Icons.create_new_folder_rounded,
+          label: Strings.addToFolder,
+        ),
+        if (isInFolder) ...[
+          PopupMenuItemData(
+            value: 6,
             icon: Icons.create_new_folder_rounded,
-            label: Strings.addToFolder),
+            label: 'Remove from folder',
+          ),
+        ],
       ],
       onSelected: (value) {
         switch (value) {
@@ -140,6 +149,11 @@ class _HomeScreenState extends State<HomeScreen> {
               addToFolder(note, position);
             });
             break;
+          case 6:
+            Future.delayed(Duration.zero, () {
+              removeFromFolder(note.uuid);
+            });
+            break;
         }
       },
     );
@@ -150,6 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
     Offset position,
   ) {
     final folders = context.read<NoteProvider>().folders;
+    folders.removeWhere(
+      (f) => f.uuid == note.folderUuid,
+    );
 
     CustomPopupMenu.show(
       context: context,
@@ -171,6 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
             );
       },
     );
+  }
+
+  void removeFromFolder(String noteUuid) {
+    context.read<NoteProvider>().removeNoteFromFolder(noteUuid);
   }
 
   void pin(NotePreviewModel note) {
@@ -267,16 +288,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ButtonPrimary(
           text: 'Create Folder',
           function: () async {
-            final id = uuid.v4();
-            final folder = FolderModel(
-              uuid: id,
-              name: folderNameController.text,
-              createdDate: now,
-            );
-            await context.read<NoteProvider>().createFolder(folder);
-            if (!mounted) return;
-            folderNameController.clear();
-            Navigator.pop(context);
+            if (folderNameController.text.isNotEmpty) {
+              final id = uuid.v4();
+              final folder = FolderModel(
+                uuid: id,
+                name: folderNameController.text,
+                createdDate: now,
+              );
+              await context.read<NoteProvider>().createFolder(folder);
+              if (!mounted) return;
+              folderNameController.clear();
+              Navigator.pop(context);
+            }
           },
         ),
       ],
@@ -350,17 +373,20 @@ class _HomeScreenState extends State<HomeScreen> {
         TextField(
           controller: folderNameController,
         ),
-        IconButton(
-          onPressed: () async {
-            await context.read<NoteProvider>().changeFolderName(
-                  folder,
-                  folderNameController.text,
-                );
-            folderNameController.clear();
-            if (!mounted) return;
-            Navigator.pop(context);
+        gapH12,
+        ButtonPrimary(
+          text: 'Confirm',
+          function: () async {
+            if (folderNameController.text.isNotEmpty) {
+              await context.read<NoteProvider>().changeFolderName(
+                    folder,
+                    folderNameController.text,
+                  );
+              folderNameController.clear();
+              if (!mounted) return;
+              Navigator.pop(context);
+            }
           },
-          icon: Icon(Icons.check_rounded),
         ),
       ],
     );
