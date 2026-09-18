@@ -52,7 +52,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
           ]
         ],
       ),
-      body: noteProvider.notes.isEmpty
+      body: noteProvider.previews.isEmpty
           ? const NoNoteWidget(
               message: Strings.addYourFirst,
               image: AppImages.noNotes,

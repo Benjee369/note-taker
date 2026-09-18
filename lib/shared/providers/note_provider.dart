@@ -136,7 +136,6 @@ class NoteProvider with ChangeNotifier {
       name: 'NoteProvider',
     );
 
-    // _notes = await noteDatabase.getNotes();
     _previews = await previewDatabase.getNotesPreview();
     _folders = await folderDatabase.getFolders();
     notifyListeners();

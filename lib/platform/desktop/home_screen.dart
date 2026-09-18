@@ -166,7 +166,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen>
                       ]
                     ],
                   ),
-                  body: noteProvider.notes.isEmpty
+                  body: noteProvider.previews.isEmpty
                       ? const NoNoteWidget(
                           message: Strings.addYourFirst,
                           image: AppImages.noNotes,
@@ -181,7 +181,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen>
                 bottom: 0,
                 child: Scaffold(
                   endDrawer: DesktopNoteDrawer(),
-                  body: noteProvider.notes.isNotEmpty
+                  body: noteProvider.previews.isNotEmpty
                       ? noteProvider.noteModel != null
                           ? Consumer<NoteProvider>(
                               builder: (context, noteProvider, child) {
