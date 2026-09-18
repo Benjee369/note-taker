@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes/auth/sign_in_screen.dart';
+import 'package:notes/shared/providers/note_provider.dart';
+import 'package:notes/shared/providers/system_settings_provider.dart';
 import 'package:notes/shared/providers/user_details_provider.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
 import 'package:notes/shared/constants/strings.dart';
@@ -19,6 +21,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  static const _totalSteps = 4;
+  static const _startupTimeout = Duration(seconds: 8);
+
+  int _completedSteps = 0;
+  bool _isFirstOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -27,12 +35,50 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  Future<void> init() async {
-    final isFirstOpen = await FirstOpenDatabase().getFirstOpenState();
+  void _completeStep() {
     if (!mounted) return;
-    final user = context.read<UserDetailsProvider>();
+    setState(() {
+      _completedSteps++;
+    });
+  }
 
-    if (isFirstOpen && !user.isSignedIn) {
+  Future<void> _loadFirstOpen() async {
+    try {
+      _isFirstOpen = await FirstOpenDatabase().getFirstOpenState();
+    } catch (_) {
+      _isFirstOpen = false;
+    } finally {
+      _completeStep();
+    }
+  }
+
+  Future<void> _awaitStep(Future<void> step) async {
+    try {
+      await step;
+    } catch (_) {
+    } finally {
+      _completeStep();
+    }
+  }
+
+  Future<void> init() async {
+    final user = context.read<UserDetailsProvider>();
+    final systemSettings = context.read<SystemSettingsProvider>();
+    final noteProvider = context.read<NoteProvider>();
+
+    await Future.wait([
+      _loadFirstOpen(),
+      _awaitStep(user.initialLoad),
+      _awaitStep(systemSettings.initialLoad),
+      _awaitStep(noteProvider.initialLoad),
+    ]).timeout(
+      _startupTimeout,
+      onTimeout: () => <void>[],
+    );
+
+    if (!mounted) return;
+
+    if (_isFirstOpen && !user.isSignedIn) {
       Navigation.navigateAndReplace(
         context,
         SignInScreen(),
@@ -48,8 +94,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final theme = Theme.of(context);
-
     return SafeArea(
       child: Scaffold(
         body: Center(
@@ -71,7 +115,16 @@ class _SplashScreenState extends State<SplashScreen> {
                   fontWeight: FontWeight.bold,
                 ),
                 gapH20,
-                LinearProgressIndicator(),
+                TweenAnimationBuilder<double>(
+                  tween: Tween(
+                    end: _completedSteps / _totalSteps,
+                  ),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  builder: (context, value, child) {
+                    return LinearProgressIndicator(value: value);
+                  },
+                ),
               ],
             ),
           ),

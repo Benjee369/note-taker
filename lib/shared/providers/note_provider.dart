@@ -15,13 +15,15 @@ class NoteProvider with ChangeNotifier {
   final PreviewDatabase previewDatabase;
   final FolderDatabase folderDatabase;
 
+  late final Future<void> initialLoad;
+
   NoteProvider(
     this.noteDatabase,
     this.openNoteDatabase,
     this.folderDatabase,
     this.previewDatabase,
   ) {
-    getNotes();
+    initialLoad = getNotes();
   }
 
   List<NoteModel> _notes = [];

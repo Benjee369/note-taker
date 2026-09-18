@@ -14,6 +14,9 @@ class UserDetailsProvider with ChangeNotifier {
 
   bool get isSignedIn => _auth.currentUser != null;
 
+  final Completer<void> _initialLoad = Completer<void>();
+  Future<void> get initialLoad => _initialLoad.future;
+
   late final StreamSubscription<User?> _authSubscription;
 
   UserDetailsProvider({
@@ -22,6 +25,9 @@ class UserDetailsProvider with ChangeNotifier {
     _authSubscription = _auth.authStateChanges().listen(
       (user) {
         _user = user;
+        if (!_initialLoad.isCompleted) {
+          _initialLoad.complete();
+        }
         notifyListeners();
       },
     );

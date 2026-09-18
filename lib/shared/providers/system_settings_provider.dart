@@ -4,8 +4,9 @@ import 'package:notes/shared/models/system_settings_model.dart';
 
 class SystemSettingsProvider with ChangeNotifier {
   final SystemSettingsDatabase systemSettingsDatabase;
+  late final Future<void> initialLoad;
   SystemSettingsProvider(this.systemSettingsDatabase) {
-    getSystemSettings();
+    initialLoad = getSystemSettings();
   }
 
   SystemSettingsModel _systemSettingsModel = SystemSettingsModel(
