@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes/features/settings/models/settings_tab_model.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
 import 'package:notes/features/settings/providers/settings_tab_index_provider.dart';
 import 'package:notes/features/settings/widgets/account_tab.dart';
@@ -8,6 +9,8 @@ import 'package:notes/features/settings/widgets/updates_tab.dart';
 import 'package:provider/provider.dart';
 import 'package:notes/shared/constants/strings.dart';
 
+import '../../../shared/constants/app_sizes.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -16,10 +19,22 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final List<Widget> tabs = [
-    AppearanceTab(),
-    AccountTab(),
-    UpdatesTab(),
+  final List<SettingsTabModel> tabs = [
+    SettingsTabModel(
+      title: Strings.appearance,
+      icon: Icons.looks_rounded,
+      page: AppearanceTab(),
+    ),
+    SettingsTabModel(
+      title: Strings.account,
+      icon: Icons.person_2_rounded,
+      page: AccountTab(),
+    ),
+    SettingsTabModel(
+      title: Strings.updates,
+      icon: Icons.update_rounded,
+      page: UpdatesTab(),
+    )
   ];
 
   String subTitle = Strings.appearance;
@@ -63,23 +78,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       fontWeight: FontWeight.bold,
                       size: 22,
                     ),
-                    SettingsTileWidget(
-                      title: Strings.appearance,
-                      icon: Icons.looks_rounded,
-                      onTap: (title) => changeTab(index, 0, title),
-                      isSelected: index.currentIndex == 0,
-                    ),
-                    SettingsTileWidget(
-                      title: Strings.account,
-                      icon: Icons.person_2_rounded,
-                      onTap: (title) => changeTab(index, 1, title),
-                      isSelected: index.currentIndex == 1,
-                    ),
-                    SettingsTileWidget(
-                      title:Strings.updates,
-                      icon: Icons.update_rounded,
-                      onTap: (title) => changeTab(index, 2, title),
-                      isSelected: index.currentIndex == 2,
+                    gapH12,
+                    Column(
+                      children: tabs.asMap().entries.map(
+                        (t) {
+                          final keyIndex = t.key;
+                          final title = t.value.title;
+                          final icon = t.value.icon;
+                          return SettingsTileWidget(
+                            title: title,
+                            icon: icon,
+                            onTap: (title) => changeTab(index, keyIndex, title),
+                            isSelected: index.currentIndex == keyIndex,
+                          );
+                        },
+                      ).toList(),
                     ),
                   ],
                 ),
@@ -108,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       IndexedStack(
                         index: index.currentIndex,
-                        children: tabs,
+                        children: tabs.map((t) => t.page).toList(),
                       ),
                     ],
                   ),

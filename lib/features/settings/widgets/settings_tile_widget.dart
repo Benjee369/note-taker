@@ -22,27 +22,35 @@ class SettingsTileWidget extends StatelessWidget {
 
     return Column(
       children: [
-        ListTile(
-          selected: isSelected,
-          selectedTileColor: theme.primary,
-          selectedColor:  theme.primary,
-          onTap: () => onTap.call(title),
-          contentPadding: EdgeInsets.zero,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 22,
+        Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(15),
+            onTap: () => onTap.call(title),
+            child: Container(
+              margin: EdgeInsets.only(bottom: 4),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: isSelected ? theme.secondary.withAlpha(30) : null,
               ),
-              gapW8,
-              TextWidget(text: title)
-            ],
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    size: 22,
+                  ),
+                  gapW8,
+                  TextWidget(text: title)
+                ],
+              ),
+            ),
           ),
         ),
-        Divider(
-          height: 1,
-        )
+        // Divider(
+        //   height: 1,
+        // )
       ],
     );
   }
