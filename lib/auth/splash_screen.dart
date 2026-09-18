@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes/auth/sign_in_screen.dart';
 import 'package:notes/shared/providers/user_details_provider.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
@@ -10,6 +9,7 @@ import 'package:notes/shared/constants/app_sizes.dart';
 import 'package:notes/features/notes/home_screen.dart';
 import 'package:provider/provider.dart';
 import '../shared/database/first_open_database.dart';
+import '../shared/widgets/custom_svg.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -48,21 +48,32 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // final theme = Theme.of(context);
+
     return SafeArea(
       child: Scaffold(
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                AppImages.splashImage,
-                height: 200,
-                width: 200,
-              ),
-              gapH12,
-              TextWidget(text: Strings.noteTaker),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 250),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomSvg(
+                  assetPath: AppImages.splashImage,
+                  height: 180,
+                  width: 180,
+                ),
+                gapH12,
+                TextWidget(
+                  text: Strings.noteTaker,
+                  size: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                gapH20,
+                LinearProgressIndicator(),
+              ],
+            ),
           ),
         ),
       ),

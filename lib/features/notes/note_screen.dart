@@ -125,6 +125,8 @@ class _NoteScreenState extends State<NoteScreen> {
       ) {
         final fontSettings =
             systemSettingProvider.systemSettingsModel.noteFontSettings;
+        final sideBarWidth =
+            systemSettingProvider.systemSettingsModel.sideBarWidth;
         return SafeArea(
           child: Scaffold(
             appBar: isMobile
@@ -153,6 +155,15 @@ class _NoteScreenState extends State<NoteScreen> {
               key: Key(noteProvider.noteModel?.uuid ?? ''),
               initialValue: noteProvider.noteModel?.content,
               onChanged: onTypingChange,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: isMobile
+                    ? EdgeInsets.zero
+                    : EdgeInsets.symmetric(
+                        horizontal: sideBarWidth / 3,
+                        vertical: 40,
+                      ),
+              ),
               style: TextStyle(
                 color: theme.primary,
                 fontWeight:
