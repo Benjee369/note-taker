@@ -5,6 +5,7 @@ import 'package:notes/shared/database/system_settings_database.dart';
 import 'package:notes/shared/providers/system_settings_provider.dart';
 import 'package:notes/app/app.dart';
 import 'package:notes/features/settings/providers/settings_tab_index_provider.dart';
+import 'package:notes/shared/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:notes/shared/database/note_database.dart';
 import 'package:notes/shared/database/open_note_database.dart';
@@ -24,11 +25,14 @@ class ProviderLayer extends StatelessWidget {
         Provider(create: (_) => SystemSettingsDatabase()),
         Provider(create: (_) => FolderDatabase()),
         Provider(create: (_) => PreviewDatabase()),
+        Provider(create: (_) => AuthService()),
         ChangeNotifierProvider(
           create: (context) => SettingsTabIndexProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => UserDetailsProvider(),
+          create: (context) => UserDetailsProvider(
+            authService: context.read<AuthService>(),
+          ),
         ),
         ChangeNotifierProvider(
           create: (context) => SystemSettingsProvider(

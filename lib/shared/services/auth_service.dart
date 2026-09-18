@@ -27,7 +27,7 @@ class AuthService {
   );
 
   // Non-blocking sign-in check
-  bool get isSignedIn => _auth.currentUser != null;
+
 
   // 2. Cross-platform Sign-In Method
   Future<UserCredential?> signInWithGoogle() async {

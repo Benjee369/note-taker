@@ -119,9 +119,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           )
                         ],
                       ),
-                      IndexedStack(
-                        index: index.currentIndex,
-                        children: tabs.map((t) => t.page).toList(),
+                      Expanded(
+                        child: IndexedStack(
+                          index: index.currentIndex,
+                          children: tabs.map((t) => t.page).toList(),
+                        ),
                       ),
                     ],
                   ),

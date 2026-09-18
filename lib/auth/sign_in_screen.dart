@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes/shared/database/first_open_database.dart';
 import 'package:notes/shared/providers/user_details_provider.dart';
-import 'package:notes/shared/services/auth_service.dart';
 import 'package:notes/shared/widgets/button_primary.dart';
 import 'package:notes/shared/widgets/dialogs.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
@@ -30,17 +29,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> signInWithGoogle() async {
     Dialogs.loading(context);
-    final user = context.read<UserDetailsProvider>();
-    final auth = AuthService();
-    await auth.signInWithGoogle().then((userDetails) {
-      user.setUserCredentials(userDetails);
+    final auth = await context.read<UserDetailsProvider>().signIn();
+    if (auth) {
       if (!mounted) return;
       Navigator.pop(context);
       Navigation.navigateAndReplace(
         context,
         HomeScreen(),
       );
-    });
+    }
   }
 
   @override
