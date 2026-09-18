@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:markdown_editor_live/markdown_editor_live.dart';
 import 'package:notes/shared/providers/system_settings_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -26,18 +26,11 @@ class NoteScreen extends StatefulWidget {
   State<NoteScreen> createState() => _NoteScreenState();
 }
 
-class _NoteScreenState extends State<NoteScreen>
-    with SingleTickerProviderStateMixin {
-  late TextEditingController _noteController;
-  late AnimationController _animationController;
-  late Animation<double> _drawerAnimation;
+class _NoteScreenState extends State<NoteScreen> {
   final _uuid = Uuid().v4();
-  final ScrollController notesScrollController = ScrollController();
-  final ScrollController markdownScrollController = ScrollController();
   Timer? _debouncer;
-  final double _collapsedWidth = 0.0;
-  double scrollControllerMultiplier = 0.0;
-  bool _isHovered = false;
+  String _currentText = '';
+  String? _activeNoteUuid;
 
   Future saveNote() async {
     final isNew = widget.isNewNote == true;
@@ -46,7 +39,7 @@ class _NoteScreenState extends State<NoteScreen>
 
     final note = NoteModel(
       uuid: isNew ? _uuid : noteProvider!.uuid,
-      content: _noteController.text,
+      content: _currentText,
       createdDate: isNew ? now : noteProvider!.createdDate,
       updatedDate: now,
       isPinned: noteProvider?.isPinned ?? false,
@@ -56,13 +49,14 @@ class _NoteScreenState extends State<NoteScreen>
   }
 
   void onTypingChange(String text) {
+    _currentText = text;
     final isNew = widget.isNewNote == true;
     final now = DateTime.now();
     final noteProvider = context.read<NoteProvider>().noteModel;
 
     final note = NoteModel(
       uuid: isNew ? _uuid : noteProvider!.uuid,
-      content: _noteController.text,
+      content: _currentText,
       createdDate: isNew ? now : noteProvider!.createdDate,
       updatedDate: now,
       isPinned: noteProvider?.isPinned ?? false,
@@ -70,7 +64,7 @@ class _NoteScreenState extends State<NoteScreen>
     );
     context.read<NoteProvider>().quickSaveNote(
           note,
-          _noteController.text,
+          _currentText,
         );
 
     if (_debouncer?.isActive ?? false) _debouncer?.cancel();
@@ -85,111 +79,33 @@ class _NoteScreenState extends State<NoteScreen>
     Navigator.pop(context);
   }
 
-  bool _isScrollingNotes = false;
-  bool _isScrollingMarkdown = false;
-
   @override
   void initState() {
     super.initState();
-
-    notesScrollController.addListener(() {
-      // If markdown is driving the scroll, ignore this event to prevent loops
-      if (_isScrollingMarkdown) return;
-
-      _isScrollingNotes = true;
-      try {
-        if (markdownScrollController.hasClients) {
-          double targetOffset = notesScrollController.offset *
-              (scrollControllerMultiplier * 0.01);
-
-          if (targetOffset >
-              markdownScrollController.position.maxScrollExtent) {
-            targetOffset = markdownScrollController.position.maxScrollExtent;
-          }
-
-          markdownScrollController.jumpTo(targetOffset);
-        }
-      } finally {
-        _isScrollingNotes = false;
-      }
-    });
-
-    markdownScrollController.addListener(() {
-      if (_isScrollingNotes) return;
-
-      _isScrollingMarkdown = true;
-      try {
-        if (notesScrollController.hasClients) {
-          double targetOffset = markdownScrollController.offset;
-
-          if (targetOffset > notesScrollController.position.maxScrollExtent) {
-            targetOffset = notesScrollController.position.maxScrollExtent;
-          }
-
-          notesScrollController.jumpTo(targetOffset);
-        }
-      } finally {
-        _isScrollingMarkdown = false;
-      }
-    });
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
-    );
-
-    _drawerAnimation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    );
-
-    _animationController.value = 1.0;
-
-    _noteController = TextEditingController();
     final noteProvider = context.read<NoteProvider>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.isNewNote != true) {
-        _noteController.text = noteProvider.noteModel!.content;
-      }
-    });
+    _currentText = noteProvider.noteModel?.content ?? '';
+    _activeNoteUuid = noteProvider.noteModel?.uuid;
 
     noteProvider.addListener(_onNoteChanged);
   }
 
   void _onNoteChanged() {
     final note = context.read<NoteProvider>();
-    final content = note.noteModel?.content ?? '';
-    if (note.noteModel == null) {
+    final model = note.noteModel;
+    if (model == null) {
       Scaffold.of(context).closeEndDrawer();
+      return;
     }
 
-    if (_noteController.text != content) {
-      _noteController.value = TextEditingValue(
-        text: content,
-        selection: TextSelection.collapsed(offset: content.length),
-      );
+    if (model.uuid != _activeNoteUuid) {
+      _activeNoteUuid = model.uuid;
+      _currentText = model.content;
+      _debouncer?.cancel();
     }
-  }
-
-  void onSideBarWidthChange(DragUpdateDetails details) {
-    final settingsProvider = context.read<SystemSettingsProvider>();
-    final width =
-        (settingsProvider.systemSettingsModel.markDownWidth - details.delta.dx)
-            .clamp(150, 500)
-            .toDouble();
-    settingsProvider.setMarkDownWidth(width, shouldSave: false);
-    if (_debouncer?.isActive ?? false) _debouncer?.cancel();
-    _debouncer = Timer(const Duration(milliseconds: 300), () {
-      settingsProvider.setMarkDownWidth(width);
-    });
   }
 
   @override
   void dispose() {
-    notesScrollController.dispose();
-    markdownScrollController.dispose();
-    _animationController.dispose();
-    _noteController.dispose();
     _debouncer?.cancel();
     context.read<NoteProvider>().removeListener(_onNoteChanged);
     super.dispose();
@@ -198,7 +114,7 @@ class _NoteScreenState extends State<NoteScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    // final textTheme = Theme.of(context).textTheme;
 
     return Consumer2<NoteProvider, SystemSettingsProvider>(
       builder: (
@@ -233,111 +149,18 @@ class _NoteScreenState extends State<NoteScreen>
                       ),
                     ],
                   ),
-            body: AnimatedBuilder(
-                animation: _drawerAnimation,
-                builder: (context, child) {
-                  final currentDrawerWidth = Tween<double>(
-                    begin: _collapsedWidth,
-                    end:
-                        systemSettingProvider.systemSettingsModel.markDownWidth,
-                  ).evaluate(_drawerAnimation);
-
-                  scrollControllerMultiplier = currentDrawerWidth;
-                  return Stack(
-                    children: [
-                      //!Text area
-                      Positioned(
-                        right: currentDrawerWidth,
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        child: TextField(
-                          scrollController: notesScrollController,
-                          onChanged: (text) => onTypingChange(text),
-                          controller: _noteController,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 3.0,
-                              horizontal: 10.0,
-                            ),
-                            border: InputBorder.none,
-                          ),
-                          style: TextStyle(
-                            color: theme.primary,
-                            fontWeight: fontSettings.isFontWeighted
-                                ? FontWeight.bold
-                                : null,
-                            fontSize: fontSettings.fontSize,
-                            height: fontSettings.fontHeight,
-                          ),
-                          maxLines: 1000,
-                        ),
-                      ),
-
-                      //!Markdown side
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: currentDrawerWidth,
-                        child: Markdown(
-                          controller: markdownScrollController,
-                          data: noteProvider.noteModel?.content ?? '',
-                          selectable: true,
-                          styleSheet: MarkdownStyleSheet(
-                            p: TextStyle(
-                              color: textTheme.bodyLarge?.color ?? Colors.black,
-                            ),
-                            textScaler:
-                                TextScaler.linear(fontSettings.fontSize * 0.07),
-                          ),
-                        ),
-                      ),
-
-                      //!Divider
-                      Positioned(
-                        right: currentDrawerWidth - 15,
-                        top: 0,
-                        bottom: 0,
-                        width: 30,
-                        child: MouseRegion(
-                          onEnter: (_) => setState(() => _isHovered = true),
-                          onExit: (_) => setState(() => _isHovered = false),
-                          cursor: SystemMouseCursors.resizeLeftRight,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              VerticalDivider(
-                                thickness: 1,
-                                color: theme.primary,
-                              ),
-                              GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onHorizontalDragUpdate: (details) {
-                                  onSideBarWidthChange(details);
-                                },
-                                child: _isHovered
-                                    ? Container(
-                                        padding: const EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: theme.primary,
-                                        ),
-                                        child: const Icon(
-                                          Icons.drag_handle,
-                                          size: 16,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : null,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }),
+            body: MarkdownEditor(
+              key: Key(noteProvider.noteModel?.uuid ?? ''),
+              initialValue: noteProvider.noteModel?.content,
+              onChanged: onTypingChange,
+              style: TextStyle(
+                color: theme.primary,
+                fontWeight:
+                    fontSettings.isFontWeighted ? FontWeight.bold : null,
+                fontSize: fontSettings.fontSize,
+                height: fontSettings.fontHeight,
+              ),
+            ),
           ),
         );
       },
