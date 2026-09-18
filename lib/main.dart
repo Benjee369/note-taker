@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:notes/shared/providers/platform_provider.dart';
 import 'package:notes/app/provider_layer.dart';
 import 'package:notes/app/setup_wizard.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 
 const _hiveDirKey = 'hive_directory';
@@ -26,6 +26,8 @@ Future<String> _resolveHiveDirectory(SharedPreferences prefs) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load();
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

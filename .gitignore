@@ -43,3 +43,27 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# Firebase / Google service credentials
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Service account / private credentials
+service-account.json
+*-service-account.json
+*.pem
+*.p12
+*.key
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+
+# Flutter
+.flutter-plugins
+build/

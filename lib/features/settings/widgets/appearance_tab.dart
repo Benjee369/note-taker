@@ -25,89 +25,98 @@ class _AppearanceTabState extends State<AppearanceTab> {
       final noteSettings = settings.systemSettingsModel.noteFontSettings;
       return Column(
         children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Row(
-              children: [
-                AnimatedSwitcher(
-                  duration: Duration(milliseconds: 50),
-                  child: Icon(
-                    settings.systemSettingsModel.theme
-                        ? Icons.wb_sunny_rounded
-                        : Icons.mode_night_rounded,
+          Material(
+            type: MaterialType.transparency,
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Row(
+                children: [
+                  AnimatedSwitcher(
+                    duration: Duration(milliseconds: 50),
+                    child: Icon(
+                      settings.systemSettingsModel.theme
+                          ? Icons.wb_sunny_rounded
+                          : Icons.mode_night_rounded,
+                    ),
                   ),
-                ),
-                gapW4,
-                TextWidget(
-                  text: Strings.darkMode,
-                  align: TextAlign.center,
-                ),
-                Spacer(),
-                Switch(
-                  value: !settings.systemSettingsModel.theme,
-                  onChanged: (_) {
-                    settings.toggleTheme();
-                  },
-                ),
-              ],
+                  gapW4,
+                  TextWidget(
+                    text: Strings.darkMode,
+                    align: TextAlign.center,
+                  ),
+                  Spacer(),
+                  Switch(
+                    value: !settings.systemSettingsModel.theme,
+                    onChanged: (_) {
+                      settings.toggleTheme();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Row(
-              children: [
-                Icon(
-                  Icons.color_lens_rounded,
-                ),
-                gapW4,
-                TextWidget(
-                  text: 'Change theme color',
-                  align: TextAlign.center,
-                ),
-                Spacer(),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2(
-                    isExpanded: true,
-                    hint: ThemeColorWidget(
-                      name: settings.systemSettingsModel.themeColorName,
-                      systemSettings: settings,
-                    ),
-                    items: colors
-                        .map(
-                          (c) => DropdownItem(
-                            value: c,
-                            height: 30,
-                            child: ThemeColorWidget(
-                              name: c,
-                              systemSettings: settings,
+          Material(
+            type: MaterialType.transparency,
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.color_lens_rounded,
+                  ),
+                  gapW4,
+                  TextWidget(
+                    text: 'Change theme color',
+                    align: TextAlign.center,
+                  ),
+                  Spacer(),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2(
+                      isExpanded: true,
+                      hint: ThemeColorWidget(
+                        name: settings.systemSettingsModel.themeColorName,
+                        systemSettings: settings,
+                      ),
+                      items: colors
+                          .map(
+                            (c) => DropdownItem(
+                              value: c,
+                              height: 30,
+                              child: ThemeColorWidget(
+                                name: c,
+                                systemSettings: settings,
+                              ),
                             ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) => {settings.changeThemeColor(val!)},
-                    buttonStyleData: const ButtonStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      height: 30,
-                      width: 140,
+                          )
+                          .toList(),
+                      onChanged: (val) => {settings.changeThemeColor(val!)},
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        height: 30,
+                        width: 140,
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Row(
-              children: [
-                Icon(
-                  Icons.text_fields_rounded,
-                ),
-                gapW4,
-                TextWidget(
-                  text: 'Note text style',
-                  align: TextAlign.center,
-                ),
-              ],
+          Material(
+            type: MaterialType.transparency,
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.text_fields_rounded,
+                  ),
+                  gapW4,
+                  TextWidget(
+                    text: 'Note text style',
+                    align: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
           Padding(
@@ -119,80 +128,89 @@ class _AppearanceTabState extends State<AppearanceTab> {
             ),
             child: Column(
               children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Row(
-                    children: [
-                      Icon(Icons.text_increase_rounded),
-                      gapW8,
-                      TextWidget(text: 'Font size'),
-                      Spacer(),
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton2(
-                          hint: TextWidget(
-                            text: '${noteSettings.fontSize}px',
-                          ),
-                          items: fontSizes
-                              .map(
-                                (f) => DropdownItem(
-                                  value: f,
-                                  height: 30,
-                                  child: TextWidget(
-                                    text: '${f}px',
+                Material(
+                  type: MaterialType.transparency,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Row(
+                      children: [
+                        Icon(Icons.text_increase_rounded),
+                        gapW8,
+                        TextWidget(text: 'Font size'),
+                        Spacer(),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2(
+                            hint: TextWidget(
+                              text: '${noteSettings.fontSize}px',
+                            ),
+                            items: fontSizes
+                                .map(
+                                  (f) => DropdownItem(
+                                    value: f,
+                                    height: 30,
+                                    child: TextWidget(
+                                      text: '${f}px',
+                                    ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (val) => settings.changeFontSize(val!),
-                          buttonStyleData: const ButtonStyleData(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            height: 30,
-                            width: 140,
+                                )
+                                .toList(),
+                            onChanged: (val) => settings.changeFontSize(val!),
+                            buttonStyleData: const ButtonStyleData(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              height: 30,
+                              width: 140,
+                            ),
                           ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Material(
+                  type: MaterialType.transparency,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Row(
+                      children: [
+                        Icon(
+                          Icons.text_format_rounded,
                         ),
-                      )
-                    ],
+                        gapW4,
+                        TextWidget(
+                          text: 'Font boldness',
+                        ),
+                        Spacer(),
+                        Switch(
+                          value: noteSettings.isFontWeighted,
+                          onChanged: (_) {
+                            settings.toggleFontWeight();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Row(
-                    children: [
-                      Icon(
-                        Icons.text_format_rounded,
-                      ),
-                      gapW4,
-                      TextWidget(
-                        text: 'Font boldness',
-                      ),
-                      Spacer(),
-                      Switch(
-                        value: noteSettings.isFontWeighted,
-                        onChanged: (_) {
-                          settings.toggleFontWeight();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Row(
-                    children: [
-                      Icon(
-                        Icons.text_format_rounded,
-                      ),
-                      gapW4,
-                      TextWidget(
-                        text: 'Font height',
-                      ),
-                      Spacer(),
-                      SizedBox(
-                        width: 100,
-                        height: 40,
-                        child: TextField(),
-                      )
-                    ],
+                Material(
+                  type: MaterialType.transparency,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Row(
+                      children: [
+                        Icon(
+                          Icons.text_format_rounded,
+                        ),
+                        gapW4,
+                        TextWidget(
+                          text: 'Font height',
+                        ),
+                        Spacer(),
+                        SizedBox(
+                          width: 100,
+                          height: 40,
+                          child: TextField(),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],

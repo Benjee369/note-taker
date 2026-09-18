@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:notes/shared/models/folder_model.dart';
 import 'package:notes/shared/models/note_preview_model.dart';
@@ -44,10 +43,6 @@ class NoteView extends StatelessWidget {
       return DragTarget<PreviewNote>(
         onWillAcceptWithDetails: (details) => true,
         onAcceptWithDetails: (details) {
-          log(
-            'adding file to folder...',
-            name: 'NoteView',
-          );
           context.read<NoteProvider>().addToFolder(
                 details.data.previewModel.uuid,
                 f.uuid,

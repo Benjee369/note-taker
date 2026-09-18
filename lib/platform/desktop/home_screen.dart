@@ -13,7 +13,7 @@ import 'package:uuid/uuid.dart';
 import 'package:notes/shared/providers/note_provider.dart';
 import 'package:notes/shared/widgets/no_note_widget.dart';
 import 'package:notes/shared/constants/app_images.dart';
-import 'package:notes/features/settings/settings_screen.dart';
+import 'package:notes/features/settings/screens/settings_screen.dart';
 
 class DesktopHomeScreen extends StatefulWidget {
   final Widget noteView;

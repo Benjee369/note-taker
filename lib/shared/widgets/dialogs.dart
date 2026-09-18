@@ -191,8 +191,11 @@ class Dialogs {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Center(
-                  child:
-                      SizedBox(width: 150, child: CircularProgressIndicator()),
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ],
             ),
