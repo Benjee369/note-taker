@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes/auth/sign_in_screen.dart';
 import 'package:notes/shared/providers/note_provider.dart';
+import 'package:notes/shared/providers/platform_provider.dart';
 import 'package:notes/shared/providers/system_settings_provider.dart';
 import 'package:notes/shared/providers/user_details_provider.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
@@ -31,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      init();
+      isLinux ? initLinux() : init();
     });
   }
 
@@ -85,6 +86,27 @@ class _SplashScreenState extends State<SplashScreen> {
       );
       return;
     }
+
+    Navigation.navigateAndReplace(
+      context,
+      HomeScreen(),
+    );
+  }
+
+  Future<void> initLinux() async {
+    final systemSettings = context.read<SystemSettingsProvider>();
+    final noteProvider = context.read<NoteProvider>();
+
+    await Future.wait([
+      _loadFirstOpen(),
+      _awaitStep(systemSettings.initialLoad),
+      _awaitStep(noteProvider.initialLoad),
+    ]).timeout(
+      _startupTimeout,
+      onTimeout: () => <void>[],
+    );
+
+    if (!mounted) return;
 
     Navigation.navigateAndReplace(
       context,

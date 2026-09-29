@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes/features/settings/models/settings_tab_model.dart';
+import 'package:notes/shared/providers/platform_provider.dart';
 import 'package:notes/shared/widgets/text_widget.dart';
 import 'package:notes/features/settings/providers/settings_tab_index_provider.dart';
 import 'package:notes/features/settings/widgets/account_tab.dart';
@@ -25,11 +26,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       icon: Icons.looks_rounded,
       page: AppearanceTab(),
     ),
-    SettingsTabModel(
-      title: Strings.account,
-      icon: Icons.person_2_rounded,
-      page: AccountTab(),
-    ),
+    if (!isLinux)
+      SettingsTabModel(
+        title: Strings.account,
+        icon: Icons.person_2_rounded,
+        page: AccountTab(),
+      ),
     SettingsTabModel(
       title: Strings.updates,
       icon: Icons.update_rounded,

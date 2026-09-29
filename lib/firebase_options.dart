@@ -57,22 +57,22 @@ class DefaultFirebaseOptions {
     projectId: 'note-taker-adbb8',
     storageBucket: 'note-taker-adbb8.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyB53ljQ8ybfHXBKiQrnMWazKmjUJKVRI2M',
     appId: '1:518013775568:ios:3ff8c9622f68c0f2e838d5',
     messagingSenderId: '518013775568',
     projectId: 'note-taker-adbb8',
     storageBucket: 'note-taker-adbb8.firebasestorage.app',
+    iosClientId: '518013775568-n1lrngbp4asa5k8bpbhbtdiu05e7v9p7.apps.googleusercontent.com',
     iosBundleId: 'com.lwendo.notes.notes',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyB53ljQ8ybfHXBKiQrnMWazKmjUJKVRI2M',
     appId: '1:518013775568:ios:3ff8c9622f68c0f2e838d5',
     messagingSenderId: '518013775568',
     projectId: 'note-taker-adbb8',
     storageBucket: 'note-taker-adbb8.firebasestorage.app',
+    iosClientId: '518013775568-n1lrngbp4asa5k8bpbhbtdiu05e7v9p7.apps.googleusercontent.com',
     iosBundleId: 'com.lwendo.notes.notes',
   );
 

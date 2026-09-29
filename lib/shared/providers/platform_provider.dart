@@ -13,3 +13,7 @@ bool get isDesktop {
       defaultTargetPlatform == TargetPlatform.macOS ||
       defaultTargetPlatform == TargetPlatform.linux;
 }
+
+bool get isLinux {
+  return defaultTargetPlatform == TargetPlatform.linux;
+}

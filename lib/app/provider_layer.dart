@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/shared/database/folder_database.dart';
 import 'package:notes/shared/database/note_preview_database.dart';
@@ -25,14 +28,19 @@ class ProviderLayer extends StatelessWidget {
         Provider(create: (_) => SystemSettingsDatabase()),
         Provider(create: (_) => FolderDatabase()),
         Provider(create: (_) => PreviewDatabase()),
-        Provider(create: (_) => AuthService()),
+        if (kIsWeb ||
+            Platform.isAndroid ||
+            Platform.isIOS ||
+            Platform.isMacOS) ...[
+          Provider(create: (_) => AuthService()),
+          ChangeNotifierProvider(
+            create: (context) => UserDetailsProvider(
+              authService: context.read<AuthService>(),
+            ),
+          ),
+        ],
         ChangeNotifierProvider(
           create: (context) => SettingsTabIndexProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserDetailsProvider(
-            authService: context.read<AuthService>(),
-          ),
         ),
         ChangeNotifierProvider(
           create: (context) => SystemSettingsProvider(
